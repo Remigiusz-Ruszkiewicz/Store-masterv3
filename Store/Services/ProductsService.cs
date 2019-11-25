@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Store.Data;
+using Store.Helpers;
 using Store.Models;
 
 namespace Store.Services
@@ -11,15 +12,17 @@ namespace Store.Services
     public class ProductsService : IProductsService
     {
         private readonly DataContext dbContext;
+        private readonly IUser user;
 
-        public ProductsService(DataContext dbContext)
+        public ProductsService(DataContext dbContext, IUser user)
         {
             this.dbContext = dbContext;
+            this.user = user;
         }
 
         public async Task<ICollection<Product>> GetAllAsync()
         {
-            return await dbContext.Products.ToListAsync();
+            return await dbContext.Products.Include(x => x.Category).ToListAsync();
         }
 
         public async Task<Product> GetAsync(Guid id)
@@ -29,6 +32,7 @@ namespace Store.Services
 
         public async Task<Product> AddAsync(Product product)
         {
+            product.OwnerUserId = user.UserId;
             dbContext.Products.Add(product);
             await dbContext.SaveChangesAsync();
             var productToReturn = await GetAsync(product.Id);

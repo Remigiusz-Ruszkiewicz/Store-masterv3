@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Store.Contracts.V1;
 using Store.Contracts.V1.Requests;
 using Store.Contracts.V1.Responses;
+using Store.Helpers;
 using Store.Models;
 using Store.Services;
 using System;
@@ -17,83 +19,58 @@ namespace Store.Controllers.V1
     public class ProductsController : ControllerBase
     {
         private readonly IProductsService productsService;
+        public IMapper Mapper { get; }
 
-        public ProductsController(IProductsService productsService)
+        public ProductsController(IProductsService productsService, IMapper mapper)
         {
             this.productsService = productsService;
+            Mapper = mapper;
         }
-
         [AllowAnonymous]
         [HttpGet(ApiRoutes.Products.GetAll)]
         public async Task<IActionResult> GetAll()
         {
-            var response = (await productsService.GetAllAsync()).Select(x => new ProductResponse { Id = x.Id, Name = x.Name });
-
+            var response = Mapper.Map<ICollection<ProductResponse>>(await productsService.GetAllAsync());
             return Ok(response);
         }
-
         [HttpGet(ApiRoutes.Products.Get)]
         public async Task<IActionResult> Get([FromRoute]Guid id)
         {
             var product = await productsService.GetAsync(id);
-
             if(product == null)
             {
                 return NotFound();
             }
-
-            var response = new ProductResponse { Id = product.Id, Name = product.Name };
-
+            var response = Mapper.Map<ProductResponse>(product);
             return Ok(response);
         }
-
         [HttpPost(ApiRoutes.Products.Add)]
         public async Task<IActionResult> Add([FromBody]ProductRequest productRequest)
         {
-            var userId = HttpContext.User.Identity.Name;
-            var newProduct = new Product()
-            {
-                Name = productRequest.Name,
-                OwnerUserId = userId,
-                CategoryId = productRequest.CategoryId
-            };
+            var newProduct = Mapper.Map<Product>(productRequest);
             var product = await productsService.AddAsync(newProduct);
-            var response = new ProductResponse {
-                Id = product.Id,
-                Name = product.Name,
-                CategoryId = product.CategoryId,
-                CategoryName = product.Category.CategoryName };
-
+            var response = Mapper.Map<ProductResponse>(product);
             return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
         }
-
         [HttpPut(ApiRoutes.Products.Update)]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody]ProductRequest productRequest)
         {
             var product = await productsService.GetAsync(id);
-
             if (product == null)
             {
                 return NotFound();
             }
-
             product.Name = productRequest.Name;
-
             var updatedProduct = await productsService.UpdateAsync(product);
-
             var response = new ProductResponse { Id = updatedProduct.Id, Name = updatedProduct.Name };
-
             return Ok(response);
         }
-
         [HttpDelete(ApiRoutes.Products.Delete)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var deleted = await productsService.DeleteAsync(id);
-
             if (deleted)
                 return NoContent();
-
             return NotFound();
         }
     }
