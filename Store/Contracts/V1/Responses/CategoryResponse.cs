@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Store.Contracts.V1.Requests
+namespace Store.Contracts.V1.Responses
 {
-    public class ProductRequest
+    public class CategoryResponse
     {
+        public int Id { get; set; }
         public string Name { get; set; }
-        public int CategoryId { get; set; }
-        public int Price { get; set; }
     }
 }

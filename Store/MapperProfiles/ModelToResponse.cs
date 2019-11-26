@@ -13,6 +13,7 @@ namespace Store.MapperProfiles
         public ModelToResponse()
         {
             CreateMap<Product, ProductResponse>().ForMember(dest => dest.CategoryName,x=>x.MapFrom(src => src.Category.CategoryName));
+            CreateMap<ProductCategory, CategoryResponse>();
         }
     }
 }

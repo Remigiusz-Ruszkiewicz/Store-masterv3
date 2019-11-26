@@ -23,5 +23,10 @@ namespace Store.Contracts.V1
             public const string Add = Base + "users";
             public const string Login = Base + "users/login";
         }
+        public static class Category
+        {
+            public const string Add = Base + "category";
+            public const string GetAll = Base + "category";
+        }
     }
 }

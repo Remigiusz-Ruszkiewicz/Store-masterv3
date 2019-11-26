@@ -15,5 +15,6 @@ namespace Store.Models
         public IdentityUser OwnerUser { get; set; }
         public int CategoryId { get; set; }
         public ProductCategory Category { get; set; }
+        public int Price { get; set; }
     }
 }

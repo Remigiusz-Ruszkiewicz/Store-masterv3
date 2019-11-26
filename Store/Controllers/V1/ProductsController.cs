@@ -29,7 +29,7 @@ namespace Store.Controllers.V1
         [AllowAnonymous]
         [HttpGet(ApiRoutes.Products.GetAll)]
         public async Task<IActionResult> GetAll()
-        {
+        {   
             var response = Mapper.Map<ICollection<ProductResponse>>(await productsService.GetAllAsync());
             return Ok(response);
         }
@@ -37,7 +37,7 @@ namespace Store.Controllers.V1
         public async Task<IActionResult> Get([FromRoute]Guid id)
         {
             var product = await productsService.GetAsync(id);
-            if(product == null)
+            if (product == null)
             {
                 return NotFound();
             }
@@ -45,8 +45,13 @@ namespace Store.Controllers.V1
             return Ok(response);
         }
         [HttpPost(ApiRoutes.Products.Add)]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Add([FromBody]ProductRequest productRequest)
         {
+            //if (productRequest.Price<1 || productRequest.Price > 1000)
+            //{
+            //    return BadRequest();
+            //}
             var newProduct = Mapper.Map<Product>(productRequest);
             var product = await productsService.AddAsync(newProduct);
             var response = Mapper.Map<ProductResponse>(product);
@@ -60,9 +65,9 @@ namespace Store.Controllers.V1
             {
                 return NotFound();
             }
-            product.Name = productRequest.Name;
+            Mapper.Map(productRequest,product);
             var updatedProduct = await productsService.UpdateAsync(product);
-            var response = new ProductResponse { Id = updatedProduct.Id, Name = updatedProduct.Name };
+            var response = Mapper.Map<ProductResponse>(updatedProduct);
             return Ok(response);
         }
         [HttpDelete(ApiRoutes.Products.Delete)]
