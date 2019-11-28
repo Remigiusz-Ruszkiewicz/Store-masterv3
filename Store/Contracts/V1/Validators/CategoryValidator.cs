@@ -11,7 +11,7 @@ namespace Store.Contracts.V1.Validators
     {
         public CategoryValidator()
         {
-            RuleFor(x => x.Name)
+            RuleFor(x => x.CategoryName)
                 .Matches("^[A-Za-z]+$");
         }
         

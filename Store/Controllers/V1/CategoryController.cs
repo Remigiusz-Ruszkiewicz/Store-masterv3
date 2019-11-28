@@ -27,16 +27,14 @@ namespace Store.Controllers.V1
         }
 
 
-        [AllowAnonymous]
         [HttpGet(ApiRoutes.Category.GetAll)]
         public async Task<IActionResult> GetAll()
         {
             var response = Mapper.Map<ICollection<ProductCategory>>(await categoriesService.GetAllAsync());
             return Ok(response);
         }
-
-        [HttpPost(ApiRoutes.Category.Add)]
         [Authorize(Roles = "Admin")]
+        [HttpPost(ApiRoutes.Category.Add)]
         public async Task<IActionResult> Add([FromBody]CategoryRequest categoryRequest)
         {
             var newCategory = Mapper.Map<ProductCategory>(categoryRequest);
