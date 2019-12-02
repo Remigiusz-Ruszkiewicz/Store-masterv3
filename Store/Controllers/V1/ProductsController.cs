@@ -26,6 +26,9 @@ namespace Store.Controllers.V1
             this.productsService = productsService;
             Mapper = mapper;
         }
+        /// <summary>
+        /// Pobiera Wszystkie Produkty
+        /// </summary>
         [AllowAnonymous]
         [HttpGet(ApiRoutes.Products.GetAll)]
         public async Task<IActionResult> GetAll()
@@ -33,6 +36,9 @@ namespace Store.Controllers.V1
             var response = Mapper.Map<ICollection<ProductResponse>>(await productsService.GetAllAsync());
             return Ok(response);
         }
+        /// <summary>
+        /// Pobiera Produkty po Id
+        /// </summary>
         [HttpGet(ApiRoutes.Products.Get)]
         public async Task<IActionResult> Get([FromRoute]Guid id)
         {
@@ -44,6 +50,9 @@ namespace Store.Controllers.V1
             var response = Mapper.Map<ProductResponse>(product);
             return Ok(response);
         }
+        /// <summary>
+        /// Dodaje Produkty
+        /// </summary>
         [HttpPost(ApiRoutes.Products.Add)]
         [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Add([FromBody]ProductRequest productRequest)
@@ -57,6 +66,9 @@ namespace Store.Controllers.V1
             var response = Mapper.Map<ProductResponse>(product);
             return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
         }
+        /// <summary>
+        /// Uaktualnia Produkty
+        /// </summary>
         [HttpPut(ApiRoutes.Products.Update)]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody]ProductRequest productRequest)
         {
@@ -70,6 +82,9 @@ namespace Store.Controllers.V1
             var response = Mapper.Map<ProductResponse>(updatedProduct);
             return Ok(response);
         }
+        /// <summary>
+        /// Usuwa Produkty
+        /// </summary>
         [HttpDelete(ApiRoutes.Products.Delete)]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {

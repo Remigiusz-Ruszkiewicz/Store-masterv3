@@ -22,6 +22,7 @@ namespace Store.Contracts.V1
         {
             public const string Add = Base + "users";
             public const string Login = Base + "users/login";
+            public const string LoginSwagger = Base + "users/login/swagger";
         }
         public static class Category
         {

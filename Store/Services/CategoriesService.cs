@@ -24,9 +24,9 @@ namespace Store.Services
             return category;
         }
 
-        public async Task<ICollection<ProductCategory>> GetAllAsync()
+        public async Task<ICollection<ProductCategory>> GetAllAsync(PaginationFilter paginationFilter)
         {
-            return await dbContext.ProductCategory.ToListAsync();
+            return await dbContext.ProductCategory.Skip((paginationFilter.PageNumber-1)*paginationFilter.PageSize).Take(paginationFilter.PageSize).ToListAsync();
         }
     }
 }

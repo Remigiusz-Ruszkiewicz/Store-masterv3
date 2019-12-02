@@ -14,8 +14,10 @@ using Store.Services;
 
 namespace Store.Controllers.V1
 {
+
     [Authorize]
     [ApiController]
+    [Produces("application/json")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoriesService categoriesService;
@@ -26,15 +28,43 @@ namespace Store.Controllers.V1
             Mapper = mapper;
         }
 
-
+        /// <summary>
+        /// Pobiera Wszystkie Kategorie
+        /// </summary>
+        /// <returns></returns>
         [HttpGet(ApiRoutes.Category.GetAll)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery]PaginationRequest paginationRequest)
         {
-            var response = Mapper.Map<ICollection<ProductCategory>>(await categoriesService.GetAllAsync());
+            var paginationFilter = Mapper.Map<PaginationFilter>(paginationRequest);
+            var categories = await categoriesService.GetAllAsync(paginationFilter);
+            var response = new PageResponse<CategoryResponse>(Mapper.Map<ICollection<CategoryResponse>>(categories));
+            var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent(),"/");
+            response.NextPage = absoluteUri;
             return Ok(response);
         }
+        /// <summary>
+        /// Dodaje Kategorie
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /v1/categories
+        ///     {
+        ///        "name": "nowa nazwa",
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="200">Zwraca utworzoną kategorię</response>
+        /// <response code="400">Błąd walidacji</response>
+        /// <response code="401">Użytkownik Niezalogowany</response>
+        /// <response code="403">Brak Dostępu</response>
+        /// <returns></returns>
         [Authorize(Roles = "Admin")]
         [HttpPost(ApiRoutes.Category.Add)]
+        [ProducesResponseType(typeof(CategoryResponse),StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Add([FromBody]CategoryRequest categoryRequest)
         {
             var newCategory = Mapper.Map<ProductCategory>(categoryRequest);

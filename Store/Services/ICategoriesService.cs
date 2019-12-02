@@ -9,6 +9,6 @@ namespace Store.Services
     public interface ICategoriesService
     {
         Task<ProductCategory> AddAsync(ProductCategory category);
-        Task<ICollection<ProductCategory>> GetAllAsync();
+        Task<ICollection<ProductCategory>> GetAllAsync(PaginationFilter paginationFilter);
     }
 }

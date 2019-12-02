@@ -14,6 +14,7 @@ namespace Store.MapperProfiles
         {
             CreateMap<ProductRequest, Product>();
             CreateMap<CategoryRequest, ProductCategory>();
+            CreateMap<PaginationRequest, PaginationFilter>();
         }
     }
 }

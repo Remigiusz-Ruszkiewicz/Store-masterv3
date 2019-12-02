@@ -19,6 +19,9 @@ namespace Store.Controllers.V1
         {
             this.usersService = usersService;
         }
+        /// <summary>
+        /// Dodaje Użytkownika
+        /// </summary>
 
         [HttpPost(ApiRoutes.Users.Add)]
         public async Task<IActionResult> Add([FromBody]NewUserRequest userRequest)
@@ -32,11 +35,13 @@ namespace Store.Controllers.V1
 
             return Ok(new AuthSuccessResponse { Token = userResult.Token });
         }
-
+        /// <summary>
+        /// Loguje 
+        /// </summary>
         [HttpPost(ApiRoutes.Users.Login)]
         public async Task<IActionResult> Login([FromBody]LoginUserRequest userRequest)
         {
-            var userResult = await usersService.LoginAsync(userRequest.Email, userRequest.Password);
+            var userResult = await usersService.LoginAsync(userRequest.UserName, userRequest.Password);
 
             if (userResult.Errors != null && userResult.Errors.Any())
             {
@@ -44,6 +49,26 @@ namespace Store.Controllers.V1
             }
 
             return Ok(new AuthSuccessResponse { Token = userResult.Token });
+
+        }
+        /// <summary>
+        /// Loguje Swagger
+        /// </summary>
+        [HttpPost(ApiRoutes.Users.LoginSwagger)]
+        public async Task<IActionResult> LoginSwagger([FromForm]LoginUserRequest userRequest)
+        {
+            var userResult = await usersService.LoginAsync(userRequest.UserName, userRequest.Password);
+
+            if (userResult.Errors != null && userResult.Errors.Any())
+            {
+                return BadRequest(new AuthFailedResponse { Errors = userResult.Errors });
+            }
+            var oAuth2 = new
+            {
+                access_token = userResult.Token,
+                token_type = "Bearer"
+            };
+            return Ok(oAuth2);
         }
     }
 }

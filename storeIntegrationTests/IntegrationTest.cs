@@ -62,7 +62,7 @@ namespace storeIntegrationTests
         {
             var response = await TestClient.PostAsJsonAsync(ApiRoutes.Users.Login, new LoginUserRequest
             {
-                Email = "admin@admin.pl",
+                UserName = "admin@admin.pl",
                 Password = "Admin1337!"
             });
             var authSucces = await response.Content.ReadAsAsync<AuthSuccessResponse>();
