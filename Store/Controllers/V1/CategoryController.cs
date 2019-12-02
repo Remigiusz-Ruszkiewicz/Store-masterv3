@@ -6,9 +6,11 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Store.Contracts.V1;
 using Store.Contracts.V1.Requests;
 using Store.Contracts.V1.Responses;
+using Store.Helpers;
 using Store.Models;
 using Store.Services;
 
@@ -37,11 +39,13 @@ namespace Store.Controllers.V1
         {
             var paginationFilter = Mapper.Map<PaginationFilter>(paginationRequest);
             var categories = await categoriesService.GetAllAsync(paginationFilter);
-            var response = new PageResponse<CategoryResponse>(Mapper.Map<ICollection<CategoryResponse>>(categories));
-            var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent(),"/");
-            response.NextPage = absoluteUri;
+            var response = PaginationHelper.CreateResponse<CategoryResponse>(paginationFilter,
+                Mapper.Map<ICollection<CategoryResponse>>(categories),
+                HttpContext, 
+                ApiRoutes.Category.GetAll);
             return Ok(response);
         }
+
         //lol
         /// <summary>
         /// Dodaje Kategorie
