@@ -42,6 +42,7 @@ namespace Store.Controllers.V1
             response.NextPage = absoluteUri;
             return Ok(response);
         }
+        //lol
         /// <summary>
         /// Dodaje Kategorie
         /// </summary>
