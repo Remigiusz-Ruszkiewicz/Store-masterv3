@@ -29,7 +29,6 @@ namespace Store.Controllers.V1
         /// <summary>
         /// Pobiera Wszystkie Produkty
         /// </summary>
-        [AllowAnonymous]
         [HttpGet(ApiRoutes.Products.GetAll)]
         public async Task<IActionResult> GetAll()
         {   

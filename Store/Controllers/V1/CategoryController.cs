@@ -34,6 +34,7 @@ namespace Store.Controllers.V1
         /// Pobiera Wszystkie Kategorie
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet(ApiRoutes.Category.GetAll)]
         public async Task<IActionResult> GetAll([FromQuery]PaginationRequest paginationRequest)
         {
